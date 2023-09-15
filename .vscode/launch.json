@@ -10,7 +10,7 @@
             "args": [
             ],
             "console": "integratedTerminal",
-            "python": "C:\\Program Files\\Python3.11\\python.exe",
+            "python": "C:\\Program Files\\Python311\\python.exe",
             "justMyCode": false
         }
     ]
