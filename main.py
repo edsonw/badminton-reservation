@@ -1,5 +1,5 @@
 
-import utils, json, random, time
+import utils, json, time
 
 def query(aid, cookie, session_key, bes_time, service_id, sku_id):
     time_list = []
@@ -33,14 +33,13 @@ def query_badminton(aid, cookie, session_key, bes_time):
 def query_tabletennis(aid, cookie, session_key, bes_time):
     return query(aid, cookie, session_key, bes_time, 72, 84)
 
-def reserve_one_time(aid, cookie, session_key, bes_time, service_id, sku_id, num):
+def reserve_one_time(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
     now = utils.get_timestamp()
     url = "https://m.yk.fkw.com/ajax/api.jsp?cmd=bespeak/add"
     url += "&aid=%s&yid=1&sessionKey=%s" % (aid, session_key)
     url += "&isFromOpen=true&vers=20230831&_grp=a&_t=%s&wx_scene=1257&fromMid=0" % now
     url += "&mgClueReportInfo={\"sourceModule\":70009,\"sourcePath\":0,\"sourceContentType\":0,\"sourceChannel\":-100,\"sourceType\":2}&yk_scene=&_page=reserve/comfirmRecord&__from=wxapp"
     
-    end_time = int(bes_time) + 3600000
     data = "aid=%s&yid=1&note&nextDay=false&besTime=%s&endTime=%s" % (aid, bes_time, end_time)
     data += f"&logicList=%5B%5D&storeId=1&serviceId={service_id}&bespeakNum={num}&mgClueReportInfo=%7B%22sourceModule%22%3A70009%2C%22sourcePath%22%3A0%2C%22sourceContentType%22%3A0%2C%22sourceChannel%22%3A-100%2C%22sourceType%22%3A2%7D"
     data += f"&fromMid=0&name=%E9%99%88%E5%85%88%E7%94%9F&phone=18180890476&bespeakCustomFields=%7B%7D&skuId={sku_id}&channelId=0&formId=1&itemData=%5B%7B%22itemId%22%3A%2263302%22%2C%22itemValue%22%3A%22%22%7D%5D"
@@ -61,20 +60,18 @@ def reserve_one_time(aid, cookie, session_key, bes_time, service_id, sku_id, num
     
     return res
 
-def reserve_two_time(aid, cookie, session_key, bes_time, service_id, sku_id, num):
+def reserve_two_time(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
     now = utils.get_timestamp()
     url = "https://m.yk.fkw.com/ajax/api.jsp?cmd=bespeak/add"
     url += "&aid=%s&yid=1&sessionKey=%s" % (aid, session_key)
     url += "&isFromOpen=true&vers=20230831&_grp=a&_t=%s&wx_scene=1257&fromMid=0" % now
     url += "&mgClueReportInfo={\"sourceModule\":70009,\"sourcePath\":0,\"sourceContentType\":0,\"sourceChannel\":-100,\"sourceType\":2}&yk_scene=&_page=reserve/comfirmRecord&__from=wxapp"
     
-    end_time = int(bes_time) + 3600000
-    bes_time2 = end_time
-    end_time2 = end_time + 3600000
-    data = "aid=%s&yid=1&note&nextDay=false&besTime=%s&endTime=%s" % (aid, bes_time, end_time)
+    mid_time = bes_time + 3600000
+    data = "aid=%s&yid=1&note&nextDay=false&besTime=%s&endTime=%s" % (aid, bes_time, mid_time)
     data += f"&logicList=%5B%5D&storeId=1&serviceId={service_id}&bespeakNum={num}&mgClueReportInfo=%7B%22sourceModule%22%3A70009%2C%22sourcePath%22%3A0%2C%22sourceContentType%22%3A0%2C%22sourceChannel%22%3A-100%2C%22sourceType%22%3A2%7D"
     data += f"&fromMid=0&name=%E9%99%88%E5%85%88%E7%94%9F&phone=18180890476&bespeakCustomFields=%7B%7D&skuId={sku_id}&channelId=0&formId=1&itemData=%5B%7B%22itemId%22%3A%2263302%22%2C%22itemValue%22%3A%22%22%7D%5D"
-    data += f"&crossBesTimeList=%5B%7B%22besTime%22%3A{bes_time}%2C%22endTime%22%3A{end_time}%2C%22timeName%22%3A%22%22%2C%22logicList%22%3A%5B%5D%7D%2C%7B%22besTime%22%3A{bes_time2}%2C%22endTime%22%3A{end_time2}%2C%22timeName%22%3A%22%22%2C%22logicList%22%3A%5B%5D%7D%5D"
+    data += f"&crossBesTimeList=%5B%7B%22besTime%22%3A{bes_time}%2C%22endTime%22%3A{mid_time}%2C%22timeName%22%3A%22%22%2C%22logicList%22%3A%5B%5D%7D%2C%7B%22besTime%22%3A{mid_time}%2C%22endTime%22%3A{end_time}%2C%22timeName%22%3A%22%22%2C%22logicList%22%3A%5B%5D%7D%5D"
     data += f"&isUseMemberDiscount=true&itemList=%5B%7B%22type%22%3A1%2C%22price%22%3A0%2C%22subtotal%22%3A0%2C%22num%22%3A{num}%2C%22data%22%3A%7B%22isUseMemberDiscount%22%3Atrue%2C%22serviceId%22%3A{service_id}%2C%22priceType%22%3A0%2C%22skuId%22%3A{sku_id}%2C%22goodsFlag%22%3A1628447953%2C%22goodsPhoto%22%3A%22http%3A%2F%2F28268434.s143i.faiykusr.com%2F2%2F1%2FAI8BCJKvvQ0QAhgAIIDi4p8GKNqDiKkFMIAgOIAg.jpg%22%2C%22memberDiscount%22%3A0%2C%22memberPriceData%22%3A%7B%7D%7D%7D%5D&deductionList=%5B%5D&totalPrice=0&shouldPrice=0&realPrice=0&payType=4&bespeakPay=1&_track=%5B%22home%2Fhome%22%2C%22serviceDetail%2FserviceDetail%22%2C%22reserve%2Fadd%22%2C%22reserve%2FcomfirmRecord%22%5D"
     data += "&_t=%s&_grp=a&__from=wxapp" % now
     
@@ -91,17 +88,19 @@ def reserve_two_time(aid, cookie, session_key, bes_time, service_id, sku_id, num
     
     return res
 
-def reserve_badminton(aid, cookie, session_key, bes_time, num, count = 1):
+def reserve_badminton(aid, cookie, session_key, bes_time, end_time, num = 1):
+    count = int((end_time - bes_time ) / 3600000)
     if count == 1:
-        return reserve_one_time(aid, cookie, session_key, bes_time, 70, 80, num)
-    else:
-        return reserve_two_time(aid, cookie, session_key, bes_time, 70, 80, num)
+        return reserve_one_time(aid, cookie, session_key, bes_time, end_time, 70, 80, num)
+    elif count == 2:
+        return reserve_two_time(aid, cookie, session_key, bes_time, end_time, 70, 80, num)
 
-def reserve_tabletennis(aid, cookie, session_key, bes_time, num, count = 1):
+def reserve_tabletennis(aid, cookie, session_key, bes_time, end_time, num = 1):
+    count = int((end_time - bes_time ) / 3600000)
     if count == 1:
-        return reserve_one_time(aid, cookie, session_key, bes_time, 72, 84, num)
-    else:
-        return reserve_two_time(aid, cookie, session_key, bes_time, 72, 84, num)
+        return reserve_one_time(aid, cookie, session_key, bes_time, end_time, 72, 84, num)
+    elif count == 2:
+        return reserve_two_time(aid, cookie, session_key, bes_time, end_time, 72, 84, num)
 
 """
 POST https://m.yk.fkw.com/ajax/myueke_h.jsp?cmd=getSessionKey&aid=28268434&yid=1&isFromOpen=true&vers=20230831&_grp=a&_t=1695002161824&wx_scene=1257&yk_scene=&_page=init&__from=wxapp HTTP/1.1
@@ -128,8 +127,8 @@ def get_session_key(aid):
     time = utils.get_timestamp()
     url = "https://m.yk.fkw.com/ajax/myueke_h.jsp?cmd=getSessionKey"
     url += "&aid=%s&yid=1&isFromOpen=true&vers=20230831&_grp=a&_t=%s&wx_scene=1257&yk_scene=&_page=&__from=wxapp" % (aid, time)    
-    data = "code=0e3Ly5100hMFCQ1SGr000JzTbv1Ly517&aid=%s&yid=1&isFromOpen=true&vers=20230831&_grp=a&_t=%s&wx_scene=1257&yk_scene=&_page=&__from=wxapp" % (aid, time)
-    res = utils.send_request(url, data)
+    data = "code=0e3Ly5100hMFCQ1SGr000JzTbv1Ly514&aid=%s&yid=1&isFromOpen=true&vers=20230831&_grp=a&_t=%s&wx_scene=1257&yk_scene=&_page=&__from=wxapp" % (aid, time)
+    res = utils.send_request(url, "", data)
     print(res.text)
     json_data = json.loads(res.text)
     success = json_data["success"]
@@ -140,53 +139,27 @@ def get_session_key(aid):
 
 def main():
 
-    print("Hello World!")
+    # 替换为自己的aid，固定值
     aid = "28268434"
-    # session_key = get_session_key(aid)
-    session_key = "5MjCiD4aOyiphulAh4JFv0GPAXx5CVvHIY4MWMX4Vmo%3D"
-    cookie = "_cliid=Hd6Qx3eksd2p7Pdq; undefined=undefined; _faiHeDistictId=62a979690a8b6cde; _faiHeSessionId=62a9796972898187; _faiHeSesPvStep=24; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%22aaee00a7313bda22%5C%22%2C70016%3A%5C%22aaeed4f19287e98e%5C%22%2C70021%3A%5C%22aaf24b8f2ea4844e%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22aaf24b8f2ea4844e%22%7D"
+    # 替换session_key，每次都要更新
+    session_key = "hHAd5x%2F7zLaXa8OH1EzrV0JYC828113ulnDtDxV8mFw%3D"
+    # 替换cookie，每次都要更新
+    cookie = "_cliid=Hd6Qx3eksd2p7Pdq; undefined=undefined; _faiHeDistictId=62a979690a8b6cde; _faiHeSessionId=62a9796972898187; _faiHeSesPvStep=50; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%22b6caf39f981a2b68%5C%22%2C70016%3A%5C%22ab01520382743cf9%5C%22%2C70021%3A%5C%22b53a960298a26526%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22b6caf39f981a2b68%22%7D"
     
-    # manully set time
     for i in range(0, 99999):
-        start_time = utils.transform_time_to_millisecond("2023-09-21 19:00:00.000")
-        reserve_tabletennis(aid, cookie, session_key, start_time, 1, 2)
-        start_time = utils.transform_time_to_millisecond("2023-09-20 20:00:00.000")
-        reserve_tabletennis(aid, cookie, session_key, start_time, 2, 1)
+        # 20点 - 21点，每个小时 2 片场地
+        start_time = utils.transform_time_to_millisecond("2023-09-23 20:00:00.000")
+        end_time   = utils.transform_time_to_millisecond("2023-09-23 21:00:00.000")
+        reserve_badminton(aid, cookie, session_key, start_time, end_time, num=2)
 
-        start_time = utils.transform_time_to_millisecond("2023-09-21 19:00:00.000")
-        reserve_badminton(aid, cookie, session_key, start_time, 1, 2)
-        start_time = utils.transform_time_to_millisecond("2023-09-21 20:00:00.000")
-        reserve_badminton(aid, cookie, session_key, start_time, 2, 1)
-        start_time = utils.transform_time_to_millisecond("2023-09-21 19:00:00.000")
-        reserve_badminton(aid, cookie, session_key, start_time, 2, 1)
+        # # 19点 - 21点，每个小时 1 片场地
+        # start_time = utils.transform_time_to_millisecond("2023-09-23 19:00:00.000")
+        # end_time   = utils.transform_time_to_millisecond("2023-09-23 21:00:00.000")
+        # reserve_badminton(aid, cookie, session_key, start_time, end_time, num=1)
+
         # sleep 0.5s
-        time.sleep(1)
+        time.sleep(0.5)
 
-    for i in range(0, 999999):
-        today = utils.get_today_timestamp()
-        for i in range(0, 3):
-            bes_time = today + 86400000 * i
-            print("query badminton: " + utils.transform_millisecond_to_time(bes_time))
-            time_list = query_badminton(aid, cookie, session_key, bes_time)
-            for time_item in time_list:
-                # < 18:00:00
-                if utils.get_hour_from_timestamp(time_item) < 19:
-                    continue
-                print("reserve badminton ready: " + utils.transform_millisecond_to_time(time_item))
-                reserve_badminton(aid, cookie, session_key, time_item)
-
-            # print("query tabletennis: " + utils.transform_millisecond_to_time(bes_time))
-            # time_list = query_tabletennis(aid, cookie, session_key, bes_time)
-            # for time_item in time_list:
-            #     # < 18:00:00
-            #     if utils.get_hour_from_timestamp(time_item) < 19:
-            #         continue
-            #     print("reserve tabletennis ready: " + utils.transform_millisecond_to_time(time_item))
-            #     reserve_tabletennis(aid, cookie, session_key, time_item)
-        
-        sleep_time = random.randint(0, 20)
-        print("sleep %d seconds" % sleep_time)
-        time.sleep(sleep_time)
 
 if __name__ == "__main__":
     main()
