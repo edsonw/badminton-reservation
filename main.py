@@ -91,9 +91,9 @@ def reserve_two_time(aid, cookie, session_key, bes_time, end_time, service_id, s
 def reserve_badminton(aid, cookie, session_key, bes_time, end_time, num = 1):
     count = int((end_time - bes_time ) / 3600000)
     if count == 1:
-        return reserve_one_time(aid, cookie, session_key, bes_time, end_time, 70, 80, num)
+        return reserve_one_time(aid, cookie, session_key, bes_time, end_time, 14, 73, num)
     elif count == 2:
-        return reserve_two_time(aid, cookie, session_key, bes_time, end_time, 70, 80, num)
+        return reserve_two_time(aid, cookie, session_key, bes_time, end_time, 14, 73, num)
 
 def reserve_tabletennis(aid, cookie, session_key, bes_time, end_time, num = 1):
     count = int((end_time - bes_time ) / 3600000)
