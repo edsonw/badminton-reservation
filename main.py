@@ -1,5 +1,5 @@
 
-import utils, json, time
+import utils, json, time, datetime
 
 def query(aid, cookie, session_key, bes_time, service_id, sku_id):
     time_list = []
@@ -142,14 +142,16 @@ def main():
     # 替换为自己的aid，固定值
     aid = "28268434"
     # 替换session_key，每次都要更新
-    session_key = "hHAd5x%2F7zLaXa8OH1EzrV0JYC828113ulnDtDxV8mFw%3D"
+    session_key = "kzuHDCzT1AYN%2BuUGEKlAXYx9Kf9UNwdHIKZL%2FG%2FLGAQ%3D"
     # 替换cookie，每次都要更新
-    cookie = "_cliid=Hd6Qx3eksd2p7Pdq; undefined=undefined; _faiHeDistictId=62a979690a8b6cde; _faiHeSessionId=62a9796972898187; _faiHeSesPvStep=50; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%22b6caf39f981a2b68%5C%22%2C70016%3A%5C%22ab01520382743cf9%5C%22%2C70021%3A%5C%22b53a960298a26526%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22b6caf39f981a2b68%22%7D"
+    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%2289e9eddfa9590274%5C%22%2C70021%3A%5C%2289e8e7489ce9debd%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%2289e9eddfa9590274%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=12"
     
+    # 获取当前时间的年月日，再加2天
+    today = datetime.date.today() + datetime.timedelta(days=2)
+    day_str = today.strftime("%Y-%m-%d")
     for i in range(0, 99999):
-        # 20点 - 21点，每个小时 2 片场地
-        start_time = utils.transform_time_to_millisecond("2023-09-23 20:00:00.000")
-        end_time   = utils.transform_time_to_millisecond("2023-09-23 21:00:00.000")
+        start_time = utils.transform_time_to_millisecond(day_str + " 09:00:00.000")
+        end_time   = utils.transform_time_to_millisecond(day_str + " 11:00:00.000")
         reserve_badminton(aid, cookie, session_key, start_time, end_time, num=2)
 
         # # 19点 - 21点，每个小时 1 片场地
