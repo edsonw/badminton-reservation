@@ -1,38 +1,6 @@
 
 import utils, json, time, datetime
 
-def query(aid, cookie, session_key, bes_time, service_id, sku_id):
-    time_list = []
-    now = utils.get_timestamp()
-    url = "https://m.yk.fkw.com/ajax/api.jsp?cmd=bespeak/initData"
-    url += "&aid=%s&yid=1&sessionKey=%s" % (aid, session_key)
-    url += "&isFromOpen=true&vers=20230831&_grp=a&_t=%s&wx_scene=1257&yk_scene=&_page=reserve/add&__from=wxapp" % now
-    
-    end_time = bes_time + 3600000 * 48 - 1 # 172,799,999
-    data = f"aid={aid}&yid=1&storeId=1&serviceId={service_id}&skuId={sku_id}&startTime={bes_time}&endTime={end_time}"
-    data += f"&_track=[\"home\/home\",\"serviceDetail\/serviceDetail\",\"reserve\/add\"]&_t={now}&_grp=a&__from=wxapp"
-    res = utils.send_request(url, cookie, data)
-    
-    json_data = json.loads(res.text)
-    success = json_data["success"]
-    if not success:
-        print("query: " + res.text)
-        return time_list
-    
-    for timestamp, info_list in json_data['data'].items():
-        for info in info_list:
-            if info['num'] < 12:
-                time_list.append(timestamp)
-                print("    time: %s, reserved: %s" % (utils.transform_millisecond_to_time(timestamp), info['num']))
-    
-    return time_list
-
-def query_badminton(aid, cookie, session_key, bes_time):
-    return query(aid, cookie, session_key, bes_time, 70, 80)
-
-def query_tabletennis(aid, cookie, session_key, bes_time):
-    return query(aid, cookie, session_key, bes_time, 72, 84)
-
 def reserve_one_time(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
     now = utils.get_timestamp()
     url = "https://m.yk.fkw.com/ajax/api.jsp?cmd=bespeak/add"
@@ -91,68 +59,27 @@ def reserve_two_time(aid, cookie, session_key, bes_time, end_time, service_id, s
 def reserve_badminton(aid, cookie, session_key, bes_time, end_time, num = 1):
     count = int((end_time - bes_time ) / 3600000)
     if count == 1:
-        return reserve_one_time(aid, cookie, session_key, bes_time, end_time, 14, 73, num)
+        return reserve_one_time(aid, cookie, session_key, bes_time, end_time, 70, 80, num)
     elif count == 2:
-        return reserve_two_time(aid, cookie, session_key, bes_time, end_time, 14, 73, num)
-
-def reserve_tabletennis(aid, cookie, session_key, bes_time, end_time, num = 1):
-    count = int((end_time - bes_time ) / 3600000)
-    if count == 1:
-        return reserve_one_time(aid, cookie, session_key, bes_time, end_time, 72, 84, num)
-    elif count == 2:
-        return reserve_two_time(aid, cookie, session_key, bes_time, end_time, 72, 84, num)
-
-"""
-POST https://m.yk.fkw.com/ajax/myueke_h.jsp?cmd=getSessionKey&aid=28268434&yid=1&isFromOpen=true&vers=20230831&_grp=a&_t=1695002161824&wx_scene=1257&yk_scene=&_page=init&__from=wxapp HTTP/1.1
-Host: m.yk.fkw.com
-Connection: keep-alive
-Content-Length: 144
-xweb_xhr: 1
-cookie: _cliid=Hd6Qx3eksd2p7Pdq; undefined=undefined; _faiHeDistictId=62a979690a8b6cde; _faiHeSessionId=62a9796972898187; _faiHeSesPvStep=1; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70021%3A%5C%22a5e5ace9a7492966%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22a5e5ace9a7492966%22%7D
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF XWEB/8391
-Content-Type: application/x-www-form-urlencoded;charset=UTF-8
-Accept: */*
-Sec-Fetch-Site: cross-site
-Sec-Fetch-Mode: cors
-Sec-Fetch-Dest: empty
-Referer: https://servicewechat.com/wxa5a9cfd49709ae9e/45/page-frame.html
-Accept-Encoding: gzip, deflate, br
-Accept-Language: zh-CN,zh
-
-code=0d33y8000ZYUHQ1k7n100fF6sY33y80S&aid=28268434&yid=1&appid=&appType=1&storeId=1&_track=%5B%22init%22%5D&_t=1695002161822&_grp=a&__from=wxapp
-"""
-
-#https://m.yk.fkw.com/ajax/myueke_h.jsp?cmd=getSessionKey&aid=28268434&yid=1&isFromOpen=true&vers=20230831&_grp=a&_t=1693969715244&wx_scene=1257&yk_scene=&_page=&__from=wxapp
-def get_session_key(aid):
-    time = utils.get_timestamp()
-    url = "https://m.yk.fkw.com/ajax/myueke_h.jsp?cmd=getSessionKey"
-    url += "&aid=%s&yid=1&isFromOpen=true&vers=20230831&_grp=a&_t=%s&wx_scene=1257&yk_scene=&_page=&__from=wxapp" % (aid, time)    
-    data = "code=0e3Ly5100hMFCQ1SGr000JzTbv1Ly514&aid=%s&yid=1&isFromOpen=true&vers=20230831&_grp=a&_t=%s&wx_scene=1257&yk_scene=&_page=&__from=wxapp" % (aid, time)
-    res = utils.send_request(url, "", data)
-    print(res.text)
-    json_data = json.loads(res.text)
-    success = json_data["success"]
-    if success == "true":
-        return json_data["msg"]
-    else:
-        return ""
+        return reserve_two_time(aid, cookie, session_key, bes_time, end_time, 70, 80, num)
 
 def main():
 
     # 替换为自己的aid，固定值
     aid = "28268434"
     # 替换session_key，每次都要更新
-    session_key = "kzuHDCzT1AYN%2BuUGEKlAXYx9Kf9UNwdHIKZL%2FG%2FLGAQ%3D"
+    session_key = "k2yc6CKE2hKgtpZ29kvb0wfMOFSLJ0KH8IZm0SowURo%3D"
     # 替换cookie，每次都要更新
-    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%2289e9eddfa9590274%5C%22%2C70021%3A%5C%2289e8e7489ce9debd%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%2289e9eddfa9590274%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=12"
-    
+    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%2289e9eddfa9590274%5C%22%2C70021%3A%5C%22ade2dfe46a093aa2%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22ade2dfe46a093aa2%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=18"
+
     # 获取当前时间的年月日，再加2天
     today = datetime.date.today() + datetime.timedelta(days=2)
     day_str = today.strftime("%Y-%m-%d")
+    # 开启定时任务，每天 15:00:00 开始执行
     for i in range(0, 99999):
-        start_time = utils.transform_time_to_millisecond(day_str + " 09:00:00.000")
-        end_time   = utils.transform_time_to_millisecond(day_str + " 11:00:00.000")
-        reserve_badminton(aid, cookie, session_key, start_time, end_time, num=2)
+        start_time = utils.transform_time_to_millisecond(day_str + " 15:00:00.000")
+        end_time   = utils.transform_time_to_millisecond(day_str + " 17:00:00.000")
+        reserve_badminton(aid, cookie, session_key, start_time, end_time, num=1)
 
         # # 19点 - 21点，每个小时 1 片场地
         # start_time = utils.transform_time_to_millisecond("2023-09-23 19:00:00.000")
@@ -160,7 +87,9 @@ def main():
         # reserve_badminton(aid, cookie, session_key, start_time, end_time, num=1)
 
         # sleep 0.5s
-        time.sleep(0.5)
+        # time.sleep(0.5)
+
+
 
 
 if __name__ == "__main__":
