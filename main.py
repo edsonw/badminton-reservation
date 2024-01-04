@@ -1,7 +1,7 @@
 
 import utils, json, time, datetime
 
-def reserve_one_time(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
+def reserve_one_hour(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
     now = utils.get_timestamp()
     url = "https://m.yk.fkw.com/ajax/api.jsp?cmd=bespeak/add"
     url += "&aid=%s&yid=1&sessionKey=%s" % (aid, session_key)
@@ -28,7 +28,7 @@ def reserve_one_time(aid, cookie, session_key, bes_time, end_time, service_id, s
     
     return res
 
-def reserve_two_time(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
+def reserve_two_hour(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
     now = utils.get_timestamp()
     url = "https://m.yk.fkw.com/ajax/api.jsp?cmd=bespeak/add"
     url += "&aid=%s&yid=1&sessionKey=%s" % (aid, session_key)
@@ -57,34 +57,42 @@ def reserve_two_time(aid, cookie, session_key, bes_time, end_time, service_id, s
     return res
 
 def reserve_badminton(aid, cookie, session_key, bes_time, end_time, num = 1):
+    service_id = 14
+    sku_id = 73
+
+    # 节假日是70 80
+    # service_id = 70
+    # sku_id = 80
     count = int((end_time - bes_time ) / 3600000)
     if count == 1:
-        return reserve_one_time(aid, cookie, session_key, bes_time, end_time, 70, 80, num)
+        return reserve_one_hour(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num)
     elif count == 2:
-        return reserve_two_time(aid, cookie, session_key, bes_time, end_time, 70, 80, num)
+        return reserve_two_hour(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num)
 
 def main():
 
     # 替换为自己的aid，固定值
     aid = "28268434"
     # 替换session_key，每次都要更新
-    session_key = "k2yc6CKE2hKgtpZ29kvb0wfMOFSLJ0KH8IZm0SowURo%3D"
+    session_key = "sGSPf9kTE%2FkF0709xeXpff2W5PN0Nxqje9zDkQZHR78%3D"
     # 替换cookie，每次都要更新
-    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%2289e9eddfa9590274%5C%22%2C70021%3A%5C%22ade2dfe46a093aa2%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22ade2dfe46a093aa2%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=18"
+    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%22d1f38a664a2f4269%5C%22%2C70021%3A%5C%22ade2dfe46a093aa2%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22d1f38a664a2f4269%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=26"
 
     # 获取当前时间的年月日，再加2天
     today = datetime.date.today() + datetime.timedelta(days=2)
     day_str = today.strftime("%Y-%m-%d")
-    # 开启定时任务，每天 15:00:00 开始执行
     for i in range(0, 99999):
-        start_time = utils.transform_time_to_millisecond(day_str + " 15:00:00.000")
-        end_time   = utils.transform_time_to_millisecond(day_str + " 17:00:00.000")
-        reserve_badminton(aid, cookie, session_key, start_time, end_time, num=1)
-
-        # # 19点 - 21点，每个小时 1 片场地
-        # start_time = utils.transform_time_to_millisecond("2023-09-23 19:00:00.000")
-        # end_time   = utils.transform_time_to_millisecond("2023-09-23 21:00:00.000")
+        now = datetime.datetime.now()
+        # if now.hour < 9:
+        #     time.sleep(0.1)
+        #     continue
+        # start_time = utils.transform_time_to_millisecond(day_str + " 15:00:00.000")
+        # end_time   = utils.transform_time_to_millisecond(day_str + " 17:00:00.000")
         # reserve_badminton(aid, cookie, session_key, start_time, end_time, num=1)
+
+        start_time = utils.transform_time_to_millisecond(day_str + " 09:00:00.000")
+        end_time   = utils.transform_time_to_millisecond(day_str + " 11:00:00.000")
+        reserve_badminton(aid, cookie, session_key, start_time, end_time, num=1)
 
         # sleep 0.5s
         # time.sleep(0.5)
