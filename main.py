@@ -1,5 +1,5 @@
 
-import utils, json, time, datetime
+import utils, json, time, datetime, threading
 
 def reserve_one_hour(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
     now = utils.get_timestamp()
@@ -55,15 +55,7 @@ def reserve_badminton(aid, cookie, session_key, bes_time, end_time, num = 1):
     elif count == 2:
         return reserve_two_hour(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num)
 
-def main():
-
-    # 替换为自己的aid，固定值
-    aid = "28268434"
-    # 替换session_key，每次都要更新
-    session_key = "0j786iV7VmC7POr9QNkgwZSF696TIdRKYysU9qkrs2s%3D"
-    # 替换cookie，每次都要更新
-    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%22f603274bd192e24f%5C%22%2C70021%3A%5C%22fb26817a293dd0d9%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22fb26817a293dd0d9%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=32"
-
+def reserve_thread(aid, cookie, session_key):
     # 获取当前时间的年月日，再加2天
     today = datetime.date.today() + datetime.timedelta(days=2)
     day_str = today.strftime("%Y-%m-%d")
@@ -83,7 +75,23 @@ def main():
         # sleep 0.5s
         # time.sleep(5)
 
+def main():
 
+    # 替换为自己的aid，固定值
+    aid = "28268434"
+    # 替换session_key，每次都要更新
+    session_key = "SY6y%2FigKIkaW2ECWGFgD%2FwVpyG2ttT404DIXmcBLSyo%3D"
+    # 替换cookie，每次都要更新
+    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%22f603274bd192e24f%5C%22%2C70021%3A%5C%22fb26817a293dd0d9%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22fb26817a293dd0d9%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=41"
+
+    # 创建10个线程，执行reserve_thread函数
+    for i in range(10):
+        thread = threading.Thread(target=reserve_thread, args=(aid, cookie, session_key))
+        thread.start()
+
+    # 暂停主线程，防止程序退出
+    while True:
+        time.sleep(1)
 
 
 if __name__ == "__main__":
