@@ -1,6 +1,17 @@
 
 import utils, json, time, datetime, threading
 
+def send_request(url, cookie, data):
+    try:
+        res = utils.send_request(url, cookie, data)
+    except Exception as e:
+        print(e)
+        return
+
+    print(res.text)
+
+    return res
+
 def reserve_one_hour(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
     now = utils.get_timestamp()
     url = "https://m.yk.fkw.com/ajax/api.jsp?cmd=bespeak/add"
@@ -15,11 +26,7 @@ def reserve_one_hour(aid, cookie, session_key, bes_time, end_time, service_id, s
     data += f"&isUseMemberDiscount=true&itemList=%5B%7B%22type%22%3A1%2C%22price%22%3A0%2C%22subtotal%22%3A0%2C%22num%22%3A{num}%2C%22data%22%3A%7B%22isUseMemberDiscount%22%3Atrue%2C%22serviceId%22%3A{service_id}%2C%22priceType%22%3A0%2C%22skuId%22%3A{sku_id}%2C%22goodsFlag%22%3A1628447953%2C%22goodsPhoto%22%3A%22http%3A%2F%2F28268434.s143i.faiykusr.com%2F2%2F1%2FAI8BCJKvvQ0QAhgAIIDi4p8GKNqDiKkFMIAgOIAg.jpg%22%2C%22memberDiscount%22%3A0%2C%22memberPriceData%22%3A%7B%7D%7D%7D%5D&deductionList=%5B%5D&totalPrice=0&shouldPrice=0&realPrice=0&payType=4&bespeakPay=1&_track=%5B%22home%2Fhome%22%2C%22serviceDetail%2FserviceDetail%22%2C%22reserve%2Fadd%22%2C%22reserve%2FcomfirmRecord%22%5D"
     data += "&_t=%s&_grp=a&__from=wxapp" % now
     
-    res = utils.send_request(url, cookie, data)
-
-    print(res.text)
-    
-    return res
+    return send_request(url, cookie, data)
 
 def reserve_two_hour(aid, cookie, session_key, bes_time, end_time, service_id, sku_id, num):
     now = utils.get_timestamp()
@@ -36,11 +43,7 @@ def reserve_two_hour(aid, cookie, session_key, bes_time, end_time, service_id, s
     data += f"&isUseMemberDiscount=true&itemList=%5B%7B%22type%22%3A1%2C%22price%22%3A0%2C%22subtotal%22%3A0%2C%22num%22%3A{num}%2C%22data%22%3A%7B%22isUseMemberDiscount%22%3Atrue%2C%22serviceId%22%3A{service_id}%2C%22priceType%22%3A0%2C%22skuId%22%3A{sku_id}%2C%22goodsFlag%22%3A1628447953%2C%22goodsPhoto%22%3A%22http%3A%2F%2F28268434.s143i.faiykusr.com%2F2%2F1%2FAI8BCJKvvQ0QAhgAIIDi4p8GKNqDiKkFMIAgOIAg.jpg%22%2C%22memberDiscount%22%3A0%2C%22memberPriceData%22%3A%7B%7D%7D%7D%5D&deductionList=%5B%5D&totalPrice=0&shouldPrice=0&realPrice=0&payType=4&bespeakPay=1&_track=%5B%22home%2Fhome%22%2C%22serviceDetail%2FserviceDetail%22%2C%22reserve%2Fadd%22%2C%22reserve%2FcomfirmRecord%22%5D"
     data += "&_t=%s&_grp=a&__from=wxapp" % now
     
-    res = utils.send_request(url, cookie, data)
-
-    print(res.text)
-    
-    return res
+    return send_request(url, cookie, data)
 
 def reserve_badminton(aid, cookie, session_key, bes_time, end_time, num = 1):
     service_id = 14
@@ -71,8 +74,7 @@ def reserve_thread(aid, cookie, session_key):
         end_time   = utils.transform_time_to_millisecond(day_str + " 11:00:00.000")
         reserve_badminton(aid, cookie, session_key, start_time, end_time, num=1)
 
-        # sleep 0.5s
-        # time.sleep(5)
+        time.sleep(5)
 
 def main():
 
