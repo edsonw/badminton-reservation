@@ -61,10 +61,10 @@ def reserve_thread(aid, cookie, session_key):
     day_str = today.strftime("%Y-%m-%d")
     for i in range(0, 99999):
         now = datetime.datetime.now()
-        if now.minute < 59:
+        if now.hour < 9 and now.minute < 59 and now.second < 30:
             time.sleep(0.1)
             continue
-        
+
         # start_time = utils.transform_time_to_millisecond(day_str + " 15:00:00.000")
         # end_time   = utils.transform_time_to_millisecond(day_str + " 17:00:00.000")
         start_time = utils.transform_time_to_millisecond(day_str + " 09:00:00.000")
