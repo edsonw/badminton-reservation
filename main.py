@@ -64,9 +64,11 @@ def reserve_thread(aid, cookie, session_key):
     day_str = today.strftime("%Y-%m-%d")
     for i in range(0, 99999):
         now = datetime.datetime.now()
-        if now.hour < 9 and now.minute < 59 and now.second < 30:
-            time.sleep(0.1)
+        # 8点59分59秒之前continue
+        if now.hour == 8 and now.minute < 59:
+            time.sleep(1)
             continue
+
 
         # start_time = utils.transform_time_to_millisecond(day_str + " 15:00:00.000")
         # end_time   = utils.transform_time_to_millisecond(day_str + " 17:00:00.000")
@@ -74,19 +76,19 @@ def reserve_thread(aid, cookie, session_key):
         end_time   = utils.transform_time_to_millisecond(day_str + " 11:00:00.000")
         reserve_badminton(aid, cookie, session_key, start_time, end_time, num=1)
 
-        time.sleep(5)
+        # time.sleep(5)
 
 def main():
 
     # 替换为自己的aid，固定值
     aid = "28268434"
     # 替换session_key，每次都要更新
-    session_key = "iouKmfUkIOT2rwomIlM58cF2dmSoZk7ml7VkEX%2B%2FrfM%3D"
+    session_key = "NwStZ%2B318i2TkyqUwZYJ%2B85leQD3xZ0mlTNR3elV5Ho%3D"
     # 替换cookie，每次都要更新
-    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%22f603274bd192e24f%5C%22%2C70021%3A%5C%22fb26817a293dd0d9%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%22fb26817a293dd0d9%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=65"
+    cookie = "_cliid=wX0usF_LbJdimyUY; undefined=undefined; _faiHeDistictId=632279fa740bd790; behaviorData=%7B%22cookieVisitIdMap%22%3A%22%7B70001%3A%5C%223e21b4e54e33609e%5C%22%2C70021%3A%5C%223e21ba08ffc677e4%5C%22%7D%22%2C%22cookieNowVisitId%22%3A%223e21ba08ffc677e4%22%7D; _faiHeSessionId=632279fad50be940; _faiHeSesPvStep=114"
 
     # 创建10个线程，执行reserve_thread函数
-    for i in range(10):
+    for i in range(5):
         thread = threading.Thread(target=reserve_thread, args=(aid, cookie, session_key))
         thread.start()
 
