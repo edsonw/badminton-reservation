@@ -50,6 +50,11 @@ def reserve_badminton(aid, cookie, session_key, bes_time, end_time, num = 1):
     # service_id = 76
     # sku_id = 92
 
+    # 36元场地
+    # service_id = 16
+    # sku_id = 71
+
+    # 免费场地
     service_id = 14
     sku_id = 73
 
