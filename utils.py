@@ -32,7 +32,7 @@ def get_today_timestamp() -> int:
     time_stamp = int(time.mktime(time_array) * 1000)
     return time_stamp
 
-def send_request(url, cookie, data):
+def send_request(session, url, cookie, data):
     headers = {
         "Host": "m.yk.fkw.com",
         "Connection": "keep-alive",
@@ -51,7 +51,12 @@ def send_request(url, cookie, data):
     }
 
     requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
-    response = requests.post(url, headers=headers, data=data, verify=False)
 
-    return response
+    session.headers.update({"Cookie": cookie})
+    try:
+        response = requests.post(url, headers=headers, data=data, verify=False)
+        return response
+    except Exception as e:
+        print(e)
+        return None
 
